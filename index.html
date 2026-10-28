@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Проверенная бытовая техника б/у с гарантией: холодильники, стиральные машины, плиты. Акции, доставка, выкуп.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Второй Круг</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: эмалевый «шоурум» — баннер акции, каталог-сетка карточек с ценниками, лента проверки, форма выкупа */
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --panel:#E4E9F0; --ink:#121A2B; --muted:#5A6476;
+  --line:#D3DAE4; --cobalt:#2342A8; --cobalt-ink:#FFFFFF; --tag:#F4C534; --tag-ink:#1A1600;
+  --sale:#D93A2B; --sale-ink:#FFFFFF;
+  --ok:#1E7A4C; --warn:#A86A00; --bad:#B23A3A;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131D; --surface:#161D2A; --panel:#1E2738; --ink:#E8ECF3; --muted:#98A3B6;
+  --line:#2B3548; --cobalt:#7C97FF; --cobalt-ink:#0B1020; --tag:#F4C534; --tag-ink:#1A1600;
+  --sale:#FF6A55; --sale-ink:#1A0603;
+  --ok:#5CC98E; --warn:#E5A93A; --bad:#F07D7D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E131D; --surface:#161D2A; --panel:#1E2738; --ink:#E8ECF3; --muted:#98A3B6;
+  --line:#2B3548; --cobalt:#7C97FF; --cobalt-ink:#0B1020; --tag:#F4C534; --tag-ink:#1A1600;
+  --sale:#FF6A55; --sale-ink:#1A0603;
+  --ok:#5CC98E; --warn:#E5A93A; --bad:#F07D7D; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:700}
+h3{font-size:1rem;font-weight:500}
+p{margin:0}
+a{color:var(--cobalt)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font:600 .75rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;
+  padding:12px 20px;font-weight:600;cursor:pointer;background:var(--cobalt);color:var(--cobalt-ink);text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.small{padding:8px 14px;font-size:.9rem}
+
+.demo-strip{margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:6px max(16px,env(safe-area-inset-left,0px));
+  background:var(--ink);color:var(--bg);font:500 .8rem/1.4 var(--f-mono);text-align:center;letter-spacing:.04em}
+
+/* Header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px))) 0;padding:12px max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;font:700 1.05rem var(--f-display);text-decoration:none;color:var(--ink)}
+.logo svg{width:34px;height:34px}
+nav.links{display:flex;gap:18px;margin-left:auto}
+nav.links a{color:var(--muted);text-decoration:none;font-weight:500}
+nav.links a:hover{color:var(--ink)}
+nav.links a.hot{color:var(--sale);font-weight:600}
+.cart-btn{position:relative}
+.lang{display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;flex:none}
+.lang button{border:0;background:transparent;padding:7px 11px;font:600 .8rem var(--f-mono);cursor:pointer;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.cart-btn .count{position:absolute;top:-6px;right:-6px;background:var(--tag);color:var(--tag-ink);border-radius:999px;
+  min-width:22px;height:22px;font:600 .75rem/22px var(--f-mono);text-align:center;padding:0 5px}
+@media (max-width:760px){nav.links{display:none}.top .wrap{justify-content:space-between;gap:10px}.lang{margin-left:auto}}
+
+/* Hero */
+.hero{padding-block:44px 28px;display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:700;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;background:var(--tag);color:var(--tag-ink);padding:0 .18em;border-radius:6px}
+.hero .lead{margin-top:18px;font-size:1.15rem;color:var(--muted);max-width:34em}
+.hero .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:32px}
+.facts div{background:var(--surface);padding:14px 16px}
+.facts b{display:block;font:700 1.4rem var(--f-display)}
+.facts span{font-size:.85rem;color:var(--muted)}
+.hero-art{background:radial-gradient(ellipse at 50% 25%,var(--surface),var(--panel) 70%);border-radius:18px;padding:28px 20px 18px;display:flex;align-items:flex-end;justify-content:center;gap:6px;min-height:320px;position:relative;overflow:hidden}
+.hero-art .stamp{position:absolute;top:22px;right:22px;transform:rotate(8deg);border:2.5px solid var(--ok);color:var(--ok);
+  font:700 .8rem/1.2 var(--f-mono);padding:8px 12px;border-radius:8px;text-align:center;letter-spacing:.08em;background:color-mix(in srgb,var(--surface) 70%,transparent)}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.hero-art{min-height:240px}}
+@media (max-width:480px){.facts{grid-template-columns:1fr}}
+
+section{padding-block:44px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.sec-head p{color:var(--muted);max-width:36em}
+
+/* Promo */
+.promo{background:var(--sale);color:var(--sale-ink);border-radius:20px;padding:28px;display:grid;gap:22px;position:relative;overflow:hidden}
+.promo::after{content:"%";position:absolute;right:-20px;top:-70px;font:700 300px/1 var(--f-display);opacity:.12;pointer-events:none}
+.promo-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:end;position:relative;z-index:1}
+.promo h2{font-size:clamp(1.6rem,4vw,2.6rem)}
+.promo .eyebrow{color:var(--sale-ink);opacity:.85}
+.promo p.sub{margin-top:8px;max-width:32em;opacity:.92}
+.timer{display:flex;gap:8px}
+.timer div{background:rgb(0 0 0 / .18);border-radius:10px;padding:10px 12px;text-align:center;min-width:64px}
+.timer b{display:block;font:700 1.6rem var(--f-mono)}
+.timer span{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.promo-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;position:relative;z-index:1;color:var(--ink)}
+
+/* Catalog */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.sale-chip{border-color:var(--sale);color:var(--sale)}
+.chip.sale-chip[aria-pressed="true"]{background:var(--sale);color:var(--sale-ink)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.toolbar input[type=search],.toolbar select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 12px}
+.toolbar input[type=search]{flex:1 1 200px;min-width:0}
+.toolbar label{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.toolbar input[type=range]{accent-color:var(--cobalt);width:140px}
+.grades{display:flex;gap:6px}
+.grades label{gap:4px;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.card .pic{background:radial-gradient(ellipse at 50% 20%,var(--surface),var(--panel) 75%);aspect-ratio:4/3;max-width:100%;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;border:0;width:100%;padding:0;overflow:hidden}
+.card .pic svg{height:84%;width:auto}
+.card .pic img,.dlg .pic img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.grade{position:absolute;top:12px;left:12px;font:600 .75rem var(--f-mono);padding:5px 9px;border-radius:6px;background:var(--surface);border:1.5px solid currentColor;z-index:1}
+.g-A{color:var(--ok)}.g-B{color:var(--warn)}.g-C{color:var(--bad)}
+.ribbon{position:absolute;top:12px;right:12px;z-index:1;background:var(--sale);color:var(--sale-ink);font:700 .75rem var(--f-mono);padding:5px 9px;border-radius:6px;letter-spacing:.05em}
+.price-tag{position:absolute;right:12px;bottom:12px;z-index:1;background:var(--tag);color:var(--tag-ink);font:700 1.05rem var(--f-display);
+  padding:7px 12px 7px 18px;border-radius:4px 8px 8px 4px;clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%);display:flex;align-items:baseline;gap:8px}
+.price-tag s{font:500 .75rem var(--f-mono);opacity:.7}
+.on-sale .price-tag{background:var(--sale);color:var(--sale-ink)}
+.card .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.specs{font:400 .8rem/1.5 var(--f-mono);color:var(--muted)}
+.was{font-size:.85rem;color:var(--muted)}
+.save{color:var(--ok);font-weight:600}
+.card .foot{display:flex;gap:8px;margin-top:auto;padding-top:8px}
+.card .foot .btn{flex:1}
+.upload{display:none;position:absolute;left:12px;bottom:12px;z-index:2;background:var(--ink);color:var(--bg);border-radius:999px;padding:6px 12px;font:600 .75rem var(--f-body);cursor:pointer}
+.seller .upload{display:inline-block}
+.empty{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px}
+
+/* Process */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:s;border-top:3px solid var(--ink);padding:0;margin:0}
+.steps li{list-style:none;padding:18px 16px 0 0;counter-increment:s}
+.steps li::before{content:counter(s,decimal-leading-zero);display:block;font:600 .8rem var(--f-mono);color:var(--cobalt);margin-bottom:8px}
+.steps h3{margin-bottom:6px}
+.steps p{font-size:.92rem;color:var(--muted)}
+@media (max-width:860px){.steps{grid-template-columns:1fr 1fr;row-gap:20px}}
+@media (max-width:480px){.steps{grid-template-columns:1fr}}
+
+/* Buyback */
+.buy{display:grid;grid-template-columns:1fr 1fr;gap:28px;background:var(--ink);color:var(--bg);border-radius:20px;padding:32px}
+.buy .eyebrow{color:var(--tag)}
+.buy p.sub{opacity:.8;margin-top:12px}
+.buy form{display:grid;gap:12px}
+.field{display:grid;gap:6px;min-width:0}
+.field>span{font-size:.85rem;opacity:.85}
+.buy input,.buy select{background:transparent;border:1.5px solid color-mix(in srgb,var(--bg) 30%,transparent);border-radius:8px;padding:10px 12px;color:var(--bg)}
+.buy select option{color:var(--ink);background:var(--surface)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.estimate{border:1.5px dashed var(--tag);border-radius:12px;padding:16px;margin-top:4px}
+.estimate b{font:700 1.6rem var(--f-display);color:var(--tag);display:block}
+.estimate small{opacity:.75}
+.buy .btn{background:var(--tag);color:var(--tag-ink)}
+.buy .result{color:var(--ink)}
+@media (max-width:860px){.buy{grid-template-columns:1fr;padding:22px}}
+
+/* Info */
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.info article{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:8px;align-content:start}
+.info p{color:var(--muted);font-size:.95rem}
+@media (max-width:860px){.info{grid-template-columns:1fr}}
+details{border-bottom:1px solid var(--line);padding-block:14px}
+details summary{cursor:pointer;font-weight:600}
+details p{color:var(--muted);margin-top:8px;max-width:60em}
+
+footer{border-top:1px solid var(--line);padding-block:32px;margin-top:24px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between}
+.sample{font:600 .7rem var(--f-mono);background:var(--panel);color:var(--muted);padding:3px 7px;border-radius:5px;letter-spacing:.06em}
+.seller-toggle{display:flex;align-items:center;gap:8px;cursor:pointer}
+
+/* Drawer & dialog */
+.scrim{position:fixed;inset:0;background:rgb(0 0 0 / .45);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);z-index:50;display:flex;flex-direction:column;
+  padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) 20px;overflow-y:auto;gap:14px}
+.drawer-head{display:flex;justify-content:space-between;align-items:center}
+.x{background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--ink);line-height:1}
+.line-item{display:flex;gap:12px;align-items:center;padding-block:10px;border-bottom:1px solid var(--line)}
+.line-item .mini{width:52px;height:52px;background:var(--panel);border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;position:relative}
+.line-item .mini svg{height:44px;width:auto}
+.line-item .mini img{width:100%;height:100%;object-fit:cover}
+.line-item .t{flex:1;min-width:0;font-size:.92rem}
+.total{display:flex;justify-content:space-between;gap:10px;font:700 1.2rem var(--f-display);padding-top:6px;flex-wrap:wrap}
+.order{display:grid;gap:10px}
+.order input,.order textarea{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 12px}
+.radio-row{display:flex;gap:16px;flex-wrap:wrap;font-size:.92rem}
+.result{background:var(--panel);border-radius:10px;padding:14px;display:grid;gap:10px}
+.result pre{white-space:pre-wrap;font:400 .82rem/1.5 var(--f-mono);margin:0}
+dialog{border:0;border-radius:18px;padding:0;max-width:min(760px,calc(100% - 32px));width:100%;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgb(0 0 0 / .5)}
+.dlg{display:grid;grid-template-columns:1fr 1.2fr}
+.dlg .pic{background:radial-gradient(ellipse at 50% 20%,var(--surface),var(--panel) 75%);display:flex;align-items:center;justify-content:center;padding:24px;position:relative;min-height:300px;overflow:hidden}
+.dlg .pic svg{height:250px;width:auto}
+.dlg .txt{padding:24px;display:grid;gap:12px;align-content:start;min-width:0}
+.checks{list-style:none;padding:0;margin:0;display:grid;gap:6px;font-size:.92rem}
+.checks li::before{content:"✓";color:var(--ok);font-weight:700;margin-right:8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.88rem;margin:0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-family:var(--f-mono)}
+@media (max-width:640px){.dlg{grid-template-columns:1fr}.dlg .pic{min-height:220px}.dlg .pic svg{height:180px}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:10px 18px;border-radius:999px;z-index:60;font-weight:500}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .15s}.card:hover{transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+
+
+<div class="demo-strip">Демо-версия сайта · товары, цены и контакты — примеры</div>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#catalog" aria-label="Второй Круг — каталог">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="var(--cobalt)" stroke-width="4"/><circle cx="20" cy="20" r="8" fill="var(--tag)"/></svg>
+      Второй Круг
+    </a>
+    <nav class="links">
+      <a href="#promo" class="hot">Акция</a><a href="#catalog">Каталог</a><a href="#check">Проверка</a><a href="#sell">Продать технику</a><a href="#delivery">Доставка</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Язык / Til"><button type="button" data-lang="ru" aria-pressed="true">RU</button><button type="button" data-lang="uz" aria-pressed="false">UZ</button></div>
+    <button class="btn small cart-btn" id="openCart" type="button">Корзина <span class="count" id="cartCount">0</span></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Бытовая техника б/у · с гарантией</p>
+      <h1 style="margin-top:14px">Проверенная техника <em>от 5 000 ₽</em></h1>
+      <p class="lead">Холодильники, стиральные машины, плиты и посудомойки по цене от 5 до 16 тысяч. Каждый аппарат проходит диагностику, чистку и суточный тест, и только потом попадает в каталог.</p>
+      <div class="actions">
+        <a class="btn" href="#promo">Смотреть акцию</a>
+        <a class="btn ghost" href="#catalog">Весь каталог</a>
+      </div>
+      <div class="facts">
+        <div><b class="mono">32</b><span>пункта проверки</span></div>
+        <div><b class="mono">до 6 мес</b><span>гарантия</span></div>
+        <div><b class="mono">24 ч</b><span>тест под нагрузкой</span></div>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true" id="heroArt">
+      <div class="stamp">ПРОВЕРЕНО<br>ОТК №2</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section id="promo">
+    <div class="promo">
+      <div class="promo-top">
+        <div>
+          <p class="eyebrow">Акция до 10 ноября</p>
+          <h2 style="margin-top:10px">Осенняя распродажа: скидки до 20%</h2>
+          <p class="sub">Снизили цены на холодильники, стиральные машины и посудомойки. Доставка по городу бесплатно на все акционные товары.</p>
+        </div>
+        <div class="timer" aria-label="До конца акции">
+          <div><b id="tD">00</b><span>дней</span></div>
+          <div><b id="tH">00</b><span>часов</span></div>
+          <div><b id="tM">00</b><span>минут</span></div>
+        </div>
+      </div>
+      <div class="promo-row" id="promoRow"></div>
+    </div>
+  </section>
+
+  <section id="catalog">
+    <div class="sec-head">
+      <div><p class="eyebrow">Каталог</p><h2 style="margin-top:8px">В наличии на складе</h2></div>
+      <p id="foundLine" class="mono" style="font-size:.9rem"></p>
+    </div>
+    <div class="filters" id="cats" role="group" aria-label="Категория"></div>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Поиск: Bosch, 6 кг, No Frost…" aria-label="Поиск">
+      <label for="maxPrice">До <span class="mono" id="maxPriceOut"></span></label>
+      <input type="range" id="maxPrice" min="5000" max="16000" step="500" value="16000">
+      <div class="grades" role="group" aria-label="Состояние">
+        <label><input type="checkbox" id="gA" value="A" checked> A</label>
+        <label><input type="checkbox" id="gB" value="B" checked> B</label>
+        <label><input type="checkbox" id="gC" value="C" checked> C</label>
+      </div>
+      <select id="sort" aria-label="Сортировка">
+        <option value="new">Сначала свежие поступления</option>
+        <option value="cheap">Сначала дешевле</option>
+        <option value="exp">Сначала дороже</option>
+        <option value="save">Самая большая выгода</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p style="margin-top:14px;font-size:.85rem;color:var(--muted)">Состояние: <b class="g-A">A</b> — как новая, следов почти нет · <b class="g-B">B</b> — мелкие царапины, на работу не влияют · <b class="g-C">C</b> — заметные следы, полностью исправна, самая низкая цена.</p>
+  </section>
+
+  <section id="check">
+    <div class="sec-head">
+      <div><p class="eyebrow">Как мы готовим технику</p><h2 style="margin-top:8px">Путь аппарата до вашей кухни</h2></div>
+      <p>Технику, которая не прошла хотя бы один этап, мы разбираем на запчасти и не продаём.</p>
+    </div>
+    <ol class="steps">
+      <li><h3>Приём</h3><p>Выкупаем у людей и организаций. Записываем модель, год, серийный номер.</p></li>
+      <li><h3>Диагностика</h3><p>32 пункта: компрессор, ТЭН, подшипники, уплотнители, электроника, утечки.</p></li>
+      <li><h3>Ремонт и чистка</h3><p>Меняем изношенные детали на оригинальные. Моем, дезинфицируем, убираем запах.</p></li>
+      <li><h3>Тест 24 часа</h3><p>Холодильник держит −18 °C, стиральная отрабатывает все программы с бельём.</p></li>
+      <li><h3>В продажу</h3><p>Фото без прикрас, честный класс состояния и гарантийный талон.</p></li>
+    </ol>
+  </section>
+
+  <section id="sell">
+    <div class="buy">
+      <div>
+        <p class="eyebrow">Выкуп техники</p>
+        <h2 style="margin-top:10px">Продайте старую технику нам</h2>
+        <p class="sub">Заберём сами, демонтаж и вынос бесплатно. Деньги сразу, наличными или переводом. Принимаем и неисправную технику — на запчасти.</p>
+        <p class="sub">Оценка ниже предварительная. Точную цену мастер назовёт на месте за 10 минут.</p>
+      </div>
+      <form id="buyForm">
+        <label class="field"><span>Что продаёте</span>
+          <select id="bCat">
+            <option value="fridge">Холодильник</option><option value="washer">Стиральная машина</option>
+            <option value="stove">Плита</option><option value="dish">Посудомоечная машина</option>
+            <option value="oven">Духовой шкаф</option><option value="micro">Микроволновка</option>
+          </select></label>
+        <div class="row2">
+          <label class="field"><span>Возраст, лет</span><input type="number" id="bAge" min="0" max="25" value="4"></label>
+          <label class="field"><span>Состояние</span>
+            <select id="bCond"><option value="1">Работает, как новая</option><option value="0.75" selected>Работает, есть следы</option><option value="0.35">Не работает</option></select></label>
+        </div>
+        <label class="field"><span>Марка (необязательно)</span><input type="text" id="bBrand" placeholder="Например, Indesit"></label>
+        <div class="estimate" aria-live="polite">
+          <small>Предварительно заплатим</small>
+          <b id="bOut" class="mono">—</b>
+          <small id="bNote"></small>
+        </div>
+        <button class="btn" type="submit">Вызвать оценщика</button>
+        <div id="buyResult" hidden></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="delivery">
+    <div class="sec-head"><div><p class="eyebrow">Доставка и гарантия</p><h2 style="margin-top:8px">Привезём, поднимем, подключим</h2></div></div>
+    <div class="info">
+      <article><h3>Доставка</h3><p>По городу — 700 ₽, при заказе от 15 000 ₽ и на акционные товары — бесплатно. Привозим в день заказа или на следующий.</p></article>
+      <article><h3>Подъём и подключение</h3><p>Подъём на лифте бесплатно, без лифта — 150 ₽ за этаж. Подключение стиральной или посудомоечной машины — 900 ₽.</p></article>
+      <article><h3>Гарантия</h3><p>От 3 до 6 месяцев в зависимости от аппарата. Сломалась по нашей вине — ремонтируем или меняем на аналог.</p></article>
+    </div>
+    <div style="margin-top:22px">
+      <details><summary>Можно посмотреть технику до покупки?</summary><p>Да, приезжайте на склад. Включим при вас любой аппарат и покажем, как он работает.</p></details>
+      <details><summary>Принимаете старую технику в зачёт?</summary><p>Да. Оценим вашу старую технику и вычтем её стоимость из цены покупки. Старую увезём той же машиной.</p></details>
+      <details><summary>Что если техника не подошла по размеру?</summary><p>В течение 7 дней обменяем на другую из каталога или вернём деньги. Доставку в этом случае оплачивает покупатель.</p></details>
+      <details><summary>Как оплатить?</summary><p>Наличными или картой курьеру при получении, переводом на карту, безналом для организаций.</p></details>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div><b style="color:var(--ink)">Второй Круг</b><br>Бытовая техника б/у с гарантией</div>
+    <div>Телефон: <span class="mono" style="user-select:all;color:var(--ink)">+7 (900) 000-00-00</span> <span class="sample">ПРИМЕР</span><br>Склад: ул. Промышленная, 12 · ежедневно 9:00–20:00 <span class="sample">ПРИМЕР</span></div>
+    <div style="display:grid;gap:8px">
+      <label class="seller-toggle"><input type="checkbox" id="sellerMode"> Режим продавца: заменить фото</label>
+      <span style="font-size:.8rem">Загруженные фото сохраняются только в этом браузере.</span>
+    </div>
+  </div>
+</footer>
+
+<input type="file" id="fileIn" accept="image/*" hidden>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Корзина">
+  <div class="drawer-head"><h2 style="font-size:1.3rem">Корзина</h2><button class="x" id="closeCart" type="button" aria-label="Закрыть">×</button></div>
+  <div id="cartItems"></div>
+  <div class="total" id="cartTotal" hidden><span>Итого</span><span class="mono" id="cartSum"></span></div>
+  <form class="order" id="orderForm" hidden>
+    <p class="eyebrow" style="margin-top:6px">Оформить заказ</p>
+    <input id="oName" required placeholder="Ваше имя" aria-label="Имя">
+    <input id="oPhone" required type="tel" placeholder="Телефон" aria-label="Телефон">
+    <div class="radio-row">
+      <label><input type="radio" name="oWay" id="oWayD" value="Доставка" checked> Доставка</label>
+      <label><input type="radio" name="oWay" id="oWayP" value="Самовывоз со склада"> Самовывоз</label>
+    </div>
+    <input id="oAddr" placeholder="Адрес, этаж, есть ли лифт" aria-label="Адрес">
+    <textarea id="oNote" rows="2" placeholder="Комментарий (необязательно)" aria-label="Комментарий"></textarea>
+    <button class="btn" type="submit">Оформить заказ</button>
+  </form>
+  <div id="orderResult" hidden></div>
+</aside>
+
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// Студийные «фото» техники: объёмная отрисовка с бликами, хромом и стеклом
+const FIN = {
+  white:{b:["#FFFFFF","#EEF1F4","#C7CDD5"],l:"#A3ACB8",p:"#DDE2E8"},
+  silver:{b:["#E8EBEE","#C3C9D0","#8C949D"],l:"#7C848D",p:"#B5BCC4"},
+  black:{b:["#4A5059","#2A2F36","#15181C"],l:"#0D0F12",p:"#353B44"}
+};
+let UID = 0;
+function photo(cat, fin="white"){
+  const f = FIN[fin], u = "u" + (UID++);
+  const defs = `<defs>
+    <linearGradient id="b${u}" x1="0" x2="1"><stop offset="0" stop-color="${f.b[1]}"/><stop offset=".25" stop-color="${f.b[0]}"/><stop offset=".8" stop-color="${f.b[1]}"/><stop offset="1" stop-color="${f.b[2]}"/></linearGradient>
+    <linearGradient id="g${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A4C66"/><stop offset=".5" stop-color="#141C29"/><stop offset="1" stop-color="#0A0F17"/></linearGradient>
+    <linearGradient id="h${u}" x1="0" x2="1"><stop offset="0" stop-color="#9AA3AE"/><stop offset=".45" stop-color="#F7F9FB"/><stop offset="1" stop-color="#8A939E"/></linearGradient>
+    <linearGradient id="hv${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F9FB"/><stop offset="1" stop-color="#8A939E"/></linearGradient>
+    <radialGradient id="s${u}"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>`;
+  const B = `url(#b${u})`, G = `url(#g${u})`, H = `url(#h${u})`, HV = `url(#hv${u})`, S = `url(#s${u})`;
+  const shine = (x,y,w,h) => `<path d="M${x} ${y}h${w*.35}l-${w*.25} ${h}h-${w*.1}z" fill="#fff" opacity=".12"/>`;
+  const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${defs}${inner}</svg>`;
+  switch(cat){
+    case "fridge": return svg("0 0 100 176",`
+      <ellipse cx="50" cy="170" rx="46" ry="5" fill="${S}"/>
+      <rect x="8" y="4" width="84" height="162" rx="8" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <line x1="8" y1="58" x2="92" y2="58" stroke="${f.l}" stroke-width="1.4"/>
+      <rect x="15" y="18" width="4.5" height="30" rx="2.2" fill="${HV}"/>
+      <rect x="15" y="68" width="4.5" height="44" rx="2.2" fill="${HV}"/>
+      <rect x="58" y="70" width="26" height="14" rx="3" fill="#121821"/>
+      <text x="71" y="80.5" text-anchor="middle" font-family="monospace" font-size="8" fill="#5CC8FF">-18°</text>
+      <rect x="16" y="156" width="68" height="6" rx="2" fill="${f.p}"/>
+      <rect x="11" y="6" width="7" height="158" fill="#fff" opacity=".22"/>`);
+    case "washer": return svg("0 0 120 136",`
+      <ellipse cx="60" cy="130" rx="54" ry="5" fill="${S}"/>
+      <rect x="8" y="4" width="104" height="122" rx="8" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <line x1="8" y1="28" x2="112" y2="28" stroke="${f.l}" stroke-width="1.2"/>
+      <rect x="14" y="10" width="30" height="12" rx="2" fill="${f.p}" stroke="${f.l}" stroke-width=".6"/>
+      <rect x="54" y="11" width="26" height="10" rx="2" fill="#121821"/>
+      <text x="67" y="18.6" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#5CC8FF">1:24</text>
+      <circle cx="96" cy="16" r="7" fill="${H}" stroke="${f.l}" stroke-width=".6"/>
+      <circle cx="60" cy="78" r="37" fill="${H}" stroke="${f.l}" stroke-width=".8"/>
+      <circle cx="60" cy="78" r="29" fill="${G}"/>
+      <circle cx="60" cy="78" r="21" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="5"/>
+      <path d="M40 62a26 26 0 0 1 22-13" stroke="#fff" stroke-opacity=".45" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="10" y="6" width="7" height="118" fill="#fff" opacity=".2"/>`);
+    case "stove": return svg("0 0 120 156",`
+      <ellipse cx="60" cy="150" rx="54" ry="5" fill="${S}"/>
+      <rect x="6" y="2" width="108" height="14" rx="3" fill="#1A1E24"/>
+      <ellipse cx="32" cy="9" rx="13" ry="3" fill="#2C323B"/><ellipse cx="88" cy="9" rx="13" ry="3" fill="#2C323B"/>
+      <ellipse cx="32" cy="9" rx="7" ry="1.6" fill="#454D58"/><ellipse cx="88" cy="9" rx="7" ry="1.6" fill="#454D58"/>
+      <rect x="8" y="16" width="104" height="130" rx="5" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <rect x="8" y="16" width="104" height="18" fill="${f.p}"/>
+      ${[24,44,76,96].map(x=>`<circle cx="${x}" cy="25" r="5.5" fill="${H}" stroke="${f.l}" stroke-width=".5"/>`).join("")}
+      <rect x="56" y="21" width="10" height="8" rx="1.5" fill="#121821"/>
+      <rect x="20" y="40" width="80" height="5" rx="2.5" fill="${H}"/>
+      <rect x="18" y="50" width="84" height="64" rx="6" fill="${G}"/>
+      ${shine(22,52,70,60)}
+      <rect x="14" y="122" width="92" height="18" rx="3" fill="none" stroke="${f.l}" stroke-width="1"/>`);
+    case "dish": return svg("0 0 100 156",`
+      <ellipse cx="50" cy="150" rx="46" ry="5" fill="${S}"/>
+      <rect x="8" y="4" width="84" height="142" rx="6" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <rect x="8" y="4" width="84" height="22" rx="6" fill="${f.p}"/>
+      ${[16,24,32,40].map(x=>`<circle cx="${x}" cy="15" r="2" fill="#5CC8FF"/>`).join("")}
+      <rect x="54" y="10" width="30" height="10" rx="2" fill="#121821"/>
+      <text x="69" y="17.6" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#5CC8FF">ECO 50°</text>
+      <rect x="24" y="34" width="52" height="5" rx="2.5" fill="${H}"/>
+      <rect x="8" y="132" width="84" height="14" fill="${f.p}" opacity=".8"/>
+      <rect x="10" y="28" width="7" height="102" fill="#fff" opacity=".2"/>`);
+    case "oven": return svg("0 0 120 104",`
+      <ellipse cx="60" cy="99" rx="54" ry="4" fill="${S}"/>
+      <rect x="6" y="4" width="108" height="90" rx="5" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <rect x="6" y="4" width="108" height="18" rx="5" fill="${f.p}"/>
+      <circle cx="22" cy="13" r="5" fill="${H}"/><circle cx="98" cy="13" r="5" fill="${H}"/>
+      <rect x="46" y="8" width="28" height="10" rx="2" fill="#121821"/>
+      <text x="60" y="15.6" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#FFB35C">180°</text>
+      <rect x="20" y="27" width="80" height="5" rx="2.5" fill="${H}"/>
+      <rect x="16" y="38" width="88" height="48" rx="5" fill="${G}"/>
+      <rect x="30" y="66" width="60" height="14" rx="3" fill="#FFB35C" opacity=".14"/>
+      ${shine(20,40,70,44)}`);
+    case "micro": return svg("0 0 140 92",`
+      <ellipse cx="70" cy="87" rx="64" ry="4" fill="${S}"/>
+      <rect x="6" y="6" width="128" height="76" rx="6" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <rect x="14" y="14" width="84" height="60" rx="4" fill="${G}"/>
+      <ellipse cx="56" cy="64" rx="26" ry="4" fill="#fff" opacity=".07"/>
+      ${shine(18,16,70,56)}
+      <rect x="104" y="14" width="24" height="10" rx="2" fill="#121821"/>
+      <text x="116" y="21.6" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#5CC8FF">2:00</text>
+      ${[0,1,2].map(r=>[0,1].map(c=>`<rect x="${105+c*12}" y="${30+r*9}" width="10" height="6" rx="1.5" fill="${f.p}" stroke="${f.l}" stroke-width=".4"/>`).join("")).join("")}
+      <circle cx="116" cy="66" r="6" fill="${H}"/>`);
+    case "vac": return svg("0 0 80 176",`
+      <ellipse cx="40" cy="170" rx="32" ry="4" fill="${S}"/>
+      <rect x="37" y="30" width="6" height="118" rx="3" fill="${H}"/>
+      <rect x="28" y="6" width="26" height="12" rx="6" fill="#2A2F36"/>
+      <rect x="44" y="16" width="8" height="24" rx="3" fill="#2A2F36"/>
+      <rect x="18" y="18" width="30" height="46" rx="12" fill="${B}" stroke="${f.l}" stroke-width=".8"/>
+      <rect x="22" y="26" width="10" height="30" rx="5" fill="#7A4FD6" opacity=".85"/>
+      <circle cx="40" cy="40" r="7" fill="${H}"/>
+      <rect x="10" y="148" width="60" height="16" rx="6" fill="#2A2F36"/>
+      <rect x="14" y="158" width="52" height="4" rx="2" fill="#E25B9A"/>`);
+  }
+}
+const CATS = [["all","Всё"],["sale","Акция"],["fridge","Холодильники"],["washer","Стиральные машины"],["stove","Плиты"],["dish","Посудомойки"],["oven","Духовки"],["micro","Микроволновки"],["vac","Пылесосы"]];
+const CHECK = {
+  fridge:["Компрессор: пусковой ток в норме","Выход на −18 °C за 6 часов","Уплотнители дверей без щелей","Обдув No Frost и датчики","Нет запаха, камеры продезинфицированы"],
+  washer:["Подшипники барабана без шума","ТЭН нагревает до 90 °C","Отжим на максимальных оборотах","Слив, залив, манжета без протечек","Все программы с загрузкой белья"],
+  stove:["Все конфорки / горелки работают","Духовка держит заданную температуру","Газ-контроль срабатывает","Ручки и переключатели исправны","Отмыта от нагара"],
+  dish:["Насос и слив","Нагрев воды","Коромысла без засоров","Протечки — проверено на поддоне","Полный цикл с посудой"],
+  oven:["Нагрев верх/низ/конвекция","Термостат ±5 °C","Таймер и подсветка","Стекло без трещин","Отмыта от нагара"],
+  micro:["Магнетрон: 200 мл воды закипает за 2 мин","Поворотный стол","Дверца и блокировка","Нет искрения внутри камеры","Камера отмыта"],
+  vac:["Мощность всасывания","Аккумулятор: 85% ёмкости","Фильтры заменены","Все насадки в комплекте","Корпус без трещин"]
+};
+// Демо-ассортимент: цены от 5 000 до 16 000 ₽; old — цена до акции
+const P = [
+  {id:1,cat:"fridge",fin:"silver",name:"Холодильник Bosch KGN39VL",year:2019,grade:"A",price:15900,old:18900,newp:56000,warr:6,spec:"No Frost · 203 см · 366 л · A+",day:1},
+  {id:2,cat:"washer",fin:"white",name:"Стиральная машина LG F2J3",year:2020,grade:"A",price:12900,old:15900,newp:34000,warr:6,spec:"6 кг · 1200 об/мин · прямой привод",day:2},
+  {id:3,cat:"fridge",fin:"silver",name:"Холодильник Samsung RB37",year:2018,grade:"B",price:14500,newp:48000,warr:6,spec:"No Frost · 201 см · 367 л · A+",day:3},
+  {id:4,cat:"stove",fin:"white",name:"Газовая плита Gorenje G5111",year:2018,grade:"B",price:7500,newp:24000,warr:3,spec:"4 горелки · газ-контроль · 50 см",day:4},
+  {id:5,cat:"dish",fin:"white",name:"Посудомойка Bosch SPV25",year:2018,grade:"B",price:11200,old:13900,newp:36000,warr:4,spec:"Встраиваемая · 45 см · 9 комплектов",day:5},
+  {id:6,cat:"washer",fin:"white",name:"Стиральная машина Indesit IWSB",year:2016,grade:"C",price:5900,newp:22000,warr:3,spec:"5 кг · 800 об/мин · узкая 40 см",day:6},
+  {id:7,cat:"micro",fin:"silver",name:"Микроволновка Panasonic NN-ST25",year:2020,grade:"A",price:5000,newp:9500,warr:3,spec:"20 л · 800 Вт · соло",day:7},
+  {id:8,cat:"stove",fin:"black",name:"Электроплита Hansa FCCW",year:2019,grade:"A",price:9900,newp:31000,warr:4,spec:"Стеклокерамика · духовка 65 л",day:8},
+  {id:9,cat:"vac",fin:"silver",name:"Пылесос Dyson V8 Absolute",year:2019,grade:"B",price:9900,old:12500,newp:35000,warr:3,spec:"Беспроводной · до 40 мин",day:9},
+  {id:10,cat:"fridge",fin:"white",name:"Холодильник Атлант ХМ-4021",year:2017,grade:"B",price:9900,newp:29000,warr:4,spec:"Капельный · 161 см · 278 л · A",day:10},
+  {id:11,cat:"oven",fin:"black",name:"Духовой шкаф Electrolux EOB",year:2017,grade:"B",price:8900,newp:33000,warr:3,spec:"Встраиваемый · 72 л · конвекция",day:11},
+  {id:12,cat:"washer",fin:"white",name:"Стиральная машина Samsung WW65",year:2019,grade:"A",price:15500,newp:38000,warr:6,spec:"6,5 кг · 1200 об/мин · пар",day:12},
+  {id:13,cat:"fridge",fin:"white",name:"Морозильник Liebherr GN 2723",year:2016,grade:"C",price:7600,old:9500,newp:46000,warr:3,spec:"No Frost · 6 ящиков · 197 л",day:13},
+  {id:14,cat:"micro",fin:"black",name:"Микроволновка Samsung ME88",year:2018,grade:"C",price:5500,newp:8000,warr:3,spec:"23 л · 800 Вт · гриль",day:14}
+];
+// Узбекский перевод (латиница): ключ — русский текст
+const UZ = {
+"Демо-версия сайта · товары, цены и контакты — примеры":"Saytning demo-versiyasi · tovarlar, narxlar va kontaktlar — namuna",
+"Второй Круг — каталог":"Второй Круг — katalog",
+"Акция":"Aksiya","Каталог":"Katalog","Проверка":"Tekshiruv","Продать технику":"Texnikani sotish","Доставка":"Yetkazib berish","Корзина":"Savat",
+"Бытовая техника б/у · с гарантией":"Ishlatilgan maishiy texnika · kafolat bilan",
+"Проверенная техника":"Tekshirilgan texnika","от 5 000 ₽":"5 000 ₽ dan",
+"Холодильники, стиральные машины, плиты и посудомойки по цене от 5 до 16 тысяч. Каждый аппарат проходит диагностику, чистку и суточный тест, и только потом попадает в каталог.":"Muzlatgichlar, kir yuvish mashinalari, plitalar va idish yuvish mashinalari — 5 mingdan 16 minggacha. Har bir qurilma diagnostika, tozalash va bir sutkalik sinovdan o‘tadi va shundan keyingina katalogga tushadi.",
+"Смотреть акцию":"Aksiyani ko‘rish","Весь каталог":"Butun katalog",
+"пункта проверки":"tekshiruv bandi","до 6 мес":"6 oygacha","гарантия":"kafolat","24 ч":"24 soat","тест под нагрузкой":"yuklama ostida sinov",
+"ПРОВЕРЕНО":"TEKSHIRILDI","ОТК №2":"OTK №2",
+"Акция до 10 ноября":"Aksiya 10-noyabrgacha","Осенняя распродажа: скидки до 20%":"Kuzgi chegirmalar: 20% gacha",
+"Снизили цены на холодильники, стиральные машины и посудомойки. Доставка по городу бесплатно на все акционные товары.":"Muzlatgichlar, kir yuvish va idish yuvish mashinalari narxini tushirdik. Barcha aksiya tovarlari shahar bo‘ylab bepul yetkaziladi.",
+"До конца акции":"Aksiya tugashiga","дней":"kun","часов":"soat","минут":"daqiqa",
+"В наличии на складе":"Omborda mavjud","Категория":"Toifa","Поиск: Bosch, 6 кг, No Frost…":"Qidiruv: Bosch, 6 kg, No Frost…","Поиск":"Qidiruv","До":"Maks.",
+"Состояние":"Holati","Сортировка":"Saralash","Сначала свежие поступления":"Avval yangi kelganlar","Сначала дешевле":"Avval arzonlari","Сначала дороже":"Avval qimmatlari","Самая большая выгода":"Eng katta foyda",
+"Состояние:":"Holati:","— как новая, следов почти нет ·":"— yangidek, deyarli izsiz ·","— мелкие царапины, на работу не влияют ·":"— mayda tirnalishlar, ishlashga ta'sir qilmaydi ·","— заметные следы, полностью исправна, самая низкая цена.":"— sezilarli izlar bor, to‘liq soz, eng past narx.",
+"Как мы готовим технику":"Texnikani qanday tayyorlaymiz","Путь аппарата до вашей кухни":"Qurilmaning oshxonangizgacha yo‘li",
+"Технику, которая не прошла хотя бы один этап, мы разбираем на запчасти и не продаём.":"Kamida bitta bosqichdan o‘tmagan texnikani ehtiyot qismlarga ajratamiz va sotmaymiz.",
+"Приём":"Qabul","Выкупаем у людей и организаций. Записываем модель, год, серийный номер.":"Aholi va tashkilotlardan sotib olamiz. Model, yil va seriya raqamini yozib olamiz.",
+"Диагностика":"Diagnostika","32 пункта: компрессор, ТЭН, подшипники, уплотнители, электроника, утечки.":"32 band: kompressor, TEN, podshipniklar, zichlagichlar, elektronika, oqishlar.",
+"Ремонт и чистка":"Ta'mir va tozalash","Меняем изношенные детали на оригинальные. Моем, дезинфицируем, убираем запах.":"Eskirgan detallarni originaliga almashtiramiz. Yuvamiz, dezinfeksiya qilamiz, hidini yo‘qotamiz.",
+"Тест 24 часа":"24 soatlik sinov","Холодильник держит −18 °C, стиральная отрабатывает все программы с бельём.":"Muzlatgich −18 °C ni ushlab turadi, kir yuvish mashinasi barcha dasturlarni kir bilan bajaradi.",
+"В продажу":"Sotuvga","Фото без прикрас, честный класс состояния и гарантийный талон.":"Bezaksiz rasmlar, holatning halol bahosi va kafolat taloni.",
+"Выкуп техники":"Texnikani sotib olish","Продайте старую технику нам":"Eski texnikangizni bizga soting",
+"Заберём сами, демонтаж и вынос бесплатно. Деньги сразу, наличными или переводом. Принимаем и неисправную технику — на запчасти.":"O‘zimiz olib ketamiz, demontaj va olib chiqish bepul. Pul darhol, naqd yoki o‘tkazma orqali. Nosoz texnikani ham ehtiyot qism uchun qabul qilamiz.",
+"Оценка ниже предварительная. Точную цену мастер назовёт на месте за 10 минут.":"Quyidagi baho taxminiy. Aniq narxni usta joyida 10 daqiqada aytadi.",
+"Что продаёте":"Nima sotasiz","Холодильник":"Muzlatgich","Стиральная машина":"Kir yuvish mashinasi","Плита":"Plita","Посудомоечная машина":"Idish yuvish mashinasi","Духовой шкаф":"Duxovka","Микроволновка":"Mikroto‘lqinli pech",
+"Возраст, лет":"Yoshi, yil","Работает, как новая":"Ishlaydi, yangidek","Работает, есть следы":"Ishlaydi, izlari bor","Не работает":"Ishlamaydi",
+"Марка (необязательно)":"Marka (ixtiyoriy)","Например, Indesit":"Masalan, Indesit","Предварительно заплатим":"Taxminan to‘laymiz","Вызвать оценщика":"Baholovchini chaqirish",
+"Доставка и гарантия":"Yetkazib berish va kafolat","Привезём, поднимем, подключим":"Olib kelamiz, ko‘taramiz, ulaymiz",
+"По городу — 700 ₽, при заказе от 15 000 ₽ и на акционные товары — бесплатно. Привозим в день заказа или на следующий.":"Shahar bo‘ylab — 700 ₽, 15 000 ₽ dan ortiq buyurtma va aksiya tovarlari uchun — bepul. Buyurtma kuni yoki ertasi kuni olib kelamiz.",
+"Подъём и подключение":"Ko‘tarish va ulash","Подъём на лифте бесплатно, без лифта — 150 ₽ за этаж. Подключение стиральной или посудомоечной машины — 900 ₽.":"Liftda ko‘tarish bepul, liftsiz — har qavat uchun 150 ₽. Kir yuvish yoki idish yuvish mashinasini ulash — 900 ₽.",
+"Гарантия":"Kafolat","От 3 до 6 месяцев в зависимости от аппарата. Сломалась по нашей вине — ремонтируем или меняем на аналог.":"Qurilmaga qarab 3 oydan 6 oygacha. Bizning aybimiz bilan buzilsa — ta'mirlaymiz yoki o‘xshashiga almashtiramiz.",
+"Можно посмотреть технику до покупки?":"Sotib olishdan oldin texnikani ko‘rsa bo‘ladimi?","Да, приезжайте на склад. Включим при вас любой аппарат и покажем, как он работает.":"Ha, omborga keling. Istalgan qurilmani yoningizda yoqib, qanday ishlashini ko‘rsatamiz.",
+"Принимаете старую технику в зачёт?":"Eski texnikani hisobga olasizmi?","Да. Оценим вашу старую технику и вычтем её стоимость из цены покупки. Старую увезём той же машиной.":"Ha. Eski texnikangizni baholab, uning narxini xarid narxidan chegirib beramiz. Eskisini o‘sha mashinada olib ketamiz.",
+"Что если техника не подошла по размеру?":"Texnika o‘lchami to‘g‘ri kelmasa-chi?","В течение 7 дней обменяем на другую из каталога или вернём деньги. Доставку в этом случае оплачивает покупатель.":"7 kun ichida katalogdagi boshqasiga almashtiramiz yoki pulni qaytaramiz. Bu holda yetkazib berishni xaridor to‘laydi.",
+"Как оплатить?":"Qanday to‘lash mumkin?","Наличными или картой курьеру при получении, переводом на карту, безналом для организаций.":"Qabul qilishda kuryerga naqd yoki karta orqali, kartaga o‘tkazma, tashkilotlar uchun bank o‘tkazmasi.",
+"Бытовая техника б/у с гарантией":"Kafolatli ishlatilgan maishiy texnika","Телефон:":"Telefon:","ПРИМЕР":"NAMUNA","Склад: ул. Промышленная, 12 · ежедневно 9:00–20:00":"Ombor: Promyshlennaya ko‘chasi, 12 · har kuni 9:00–20:00",
+"Режим продавца: заменить фото":"Sotuvchi rejimi: rasmni almashtirish","Загруженные фото сохраняются только в этом браузере.":"Yuklangan rasmlar faqat shu brauzerda saqlanadi.",
+"Закрыть":"Yopish","Итого":"Jami","Оформить заказ":"Buyurtma berish","Ваше имя":"Ismingiz","Имя":"Ism","Телефон":"Telefon","Самовывоз":"Olib ketish","Самовывоз со склада":"Ombordan olib ketish",
+"Адрес, этаж, есть ли лифт":"Manzil, qavat, lift bormi","Адрес":"Manzil","Комментарий (необязательно)":"Izoh (ixtiyoriy)","Комментарий":"Izoh",
+"Всё":"Hammasi","Холодильники":"Muzlatgichlar","Стиральные машины":"Kir yuvish mashinalari","Плиты":"Plitalar","Посудомойки":"Idish yuvish mashinalari","Духовки":"Duxovkalar","Микроволновки":"Mikroto‘lqinli pechlar","Пылесосы":"Changyutgichlar",
+"АКЦИЯ":"AKSIYA","Подробнее":"Batafsil","Заменить фото":"Rasmni almashtirish","Загрузить фото":"Rasm yuklash","г.":"y.","мес":"oy","Новая ≈":"Yangisi ≈","В корзине":"Savatda","В корзину":"Savatga",
+"Под эти фильтры ничего нет. Уберите часть условий или оставьте заявку — сообщим, когда привезём нужную модель.":"Bu filtrlarga mos tovar yo‘q. Ba'zi shartlarni olib tashlang yoki ariza qoldiring — kerakli model kelganda xabar beramiz.",
+"Найдено":"Topildi","Год выпуска":"Ishlab chiqarilgan yili","Характеристики":"Xususiyatlari","Новая стоит":"Yangisining narxi","Цена до акции":"Aksiyagacha narx","Что проверили":"Nimalar tekshirildi","Уже в корзине":"Allaqachon savatda","В корзину за":"Savatga qo‘shish:",
+"акция":"aksiya","Корзина пуста. Добавьте технику из каталога.":"Savat bo‘sh. Katalogdan texnika qo‘shing.","доставка":"yetkazib berish","доставка бесплатно":"yetkazib berish bepul","Убрать":"Olib tashlash",
+"Скопировать текст заявки":"Ariza matnini nusxalash","Отправьте этот текст по телефону +7 (900) 000-00-00 в WhatsApp или Telegram (номер — пример).":"Bu matnni +7 (900) 000-00-00 raqamiga WhatsApp yoki Telegram orqali yuboring (raqam — namuna).",
+"Скопировано":"Nusxalandi","Выделено — нажмите Ctrl+C":"Belgilandi — Ctrl+C ni bosing","Заявка готова":"Ariza tayyor","Заявка на выкуп":"Sotib olish uchun ariza","Заказ":"Buyurtma",
+"Выкуп":"Sotib olish","Возраст":"Yoshi","лет":"yil","Предварительная оценка":"Taxminiy baho",
+"Технику старше 12 лет обычно берём на запчасти.":"12 yildan eski texnikani odatda ehtiyot qism uchun olamiz.","Неисправную технику оцениваем по стоимости запчастей.":"Nosoz texnikani ehtiyot qismlar narxi bo‘yicha baholaymiz.","Вывоз и демонтаж бесплатно.":"Olib ketish va demontaj bepul.",
+"Добавлено в корзину":"Savatga qo‘shildi","Фото загружено":"Rasm yuklandi","Фото показано, но не сохранится: в браузере мало места":"Rasm ko‘rsatildi, lekin saqlanmaydi: brauzerda joy kam","Не удалось открыть файл. Выберите фото в формате JPG или PNG.":"Faylni ochib bo‘lmadi. JPG yoki PNG rasmini tanlang.",
+"Компрессор: пусковой ток в норме":"Kompressor: ishga tushirish toki me'yorida","Выход на −18 °C за 6 часов":"6 soatda −18 °C ga chiqadi","Уплотнители дверей без щелей":"Eshik zichlagichlarida tirqish yo‘q","Обдув No Frost и датчики":"No Frost shamollatgichi va datchiklar","Нет запаха, камеры продезинфицированы":"Hid yo‘q, kameralar dezinfeksiya qilingan",
+"Подшипники барабана без шума":"Baraban podshipniklari shovqinsiz","ТЭН нагревает до 90 °C":"TEN 90 °C gacha isitadi","Отжим на максимальных оборотах":"Maksimal aylanishda siqish","Слив, залив, манжета без протечек":"To‘kish, quyish, manjeta — oqishsiz","Все программы с загрузкой белья":"Barcha dasturlar kir bilan sinaldi",
+"Все конфорки / горелки работают":"Barcha konforka va gorelkalar ishlaydi","Духовка держит заданную температуру":"Duxovka berilgan haroratni ushlaydi","Газ-контроль срабатывает":"Gaz-nazorat ishlaydi","Ручки и переключатели исправны":"Tutqich va almashtirgichlar soz","Отмыта от нагара":"Kuyindidan tozalangan",
+"Насос и слив":"Nasos va to‘kish","Нагрев воды":"Suvni isitish","Коромысла без засоров":"Purkagichlar tiqilmagan","Протечки — проверено на поддоне":"Oqish — taglikda tekshirildi","Полный цикл с посудой":"Idishlar bilan to‘liq sikl",
+"Нагрев верх/низ/конвекция":"Yuqori/past qizdirish va konveksiya","Термостат ±5 °C":"Termostat ±5 °C","Таймер и подсветка":"Taymer va yoritgich","Стекло без трещин":"Oynada yoriq yo‘q",
+"Магнетрон: 200 мл воды закипает за 2 мин":"Magnetron: 200 ml suv 2 daqiqada qaynaydi","Поворотный стол":"Aylanuvchi stol","Дверца и блокировка":"Eshikcha va qulf","Нет искрения внутри камеры":"Kamera ichida uchqun yo‘q","Камера отмыта":"Kamera yuvilgan",
+"Мощность всасывания":"So‘rish quvvati","Аккумулятор: 85% ёмкости":"Akkumulyator: 85% sig‘im","Фильтры заменены":"Filtrlar almashtirilgan","Все насадки в комплекте":"Barcha nasadkalar to‘liq","Корпус без трещин":"Korpusda yoriq yo‘q"
+};
+const SPEC_UZ = {1:"No Frost · 203 sm · 366 l · A+",2:"6 kg · 1200 ayl/min · to‘g‘ridan-to‘g‘ri yuritma",3:"No Frost · 201 sm · 367 l · A+",4:"4 gorelka · gaz-nazorat · 50 sm",5:"O‘rnatiladigan · 45 sm · 9 to‘plam",6:"5 kg · 800 ayl/min · tor, 40 sm",7:"20 l · 800 Vt · solo",8:"Shisha-keramika · duxovka 65 l",9:"Simsiz · 40 daqiqagacha",10:"Tomchili · 161 sm · 278 l · A",11:"O‘rnatiladigan · 72 l · konveksiya",12:"6,5 kg · 1200 ayl/min · bug‘",13:"No Frost · 6 tortma · 197 l",14:"23 l · 800 Vt · gril"};
+const TYPE_UZ = [["Стиральная машина","Kir yuvish mashinasi"],["Газовая плита","Gaz plitasi"],["Духовой шкаф","Duxovka"],["Холодильник","Muzlatgich"],["Посудомойка","Idish yuvish mashinasi"],["Микроволновка","Mikroto‘lqinli pech"],["Электроплита","Elektr plita"],["Пылесос","Changyutgich"],["Морозильник","Muzlatish kamerasi"]];
+let lang = "ru";
+function t(s){ return lang === "uz" && UZ[s] != null ? UZ[s] : s; }
+function pname(p){ if (lang !== "uz") return p.name; const m = TYPE_UZ.find(([r]) => p.name.startsWith(r)); return m ? m[1] + p.name.slice(m[0].length) : p.name; }
+function pspec(p){ return lang === "uz" ? SPEC_UZ[p.id] : p.spec; }
+// Статичный текст страницы переводится по текстовым узлам; динамические блоки рисуются через t()
+const SKIP = "script,style,svg,#grid,#promoRow,#cartItems,#dlg,#orderResult,#buyResult,#cats,#foundLine,#bOut,#bNote,#cartSum,#maxPriceOut,#toast,#cartCount,.timer b,.lang";
+let staticNodes = null;
+function translateStatic(){
+  if (!staticNodes){
+    staticNodes = [];
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode());) if (n.textContent.trim() && !n.parentElement.closest(SKIP)) staticNodes.push([n, n.textContent]);
+    document.querySelectorAll("[placeholder],[aria-label]").forEach(el => { if (!el.parentElement.closest(SKIP)) { el.dataset.ph = el.getAttribute("placeholder") || ""; el.dataset.al = el.getAttribute("aria-label") || ""; } });
+  }
+  staticNodes.forEach(([n, o]) => { const k = o.trim(); n.textContent = o.replace(k, () => t(k)); });
+  document.querySelectorAll("[data-ph],[data-al]").forEach(el => { if (el.dataset.ph) el.placeholder = t(el.dataset.ph); if (el.dataset.al) el.setAttribute("aria-label", t(el.dataset.al)); });
+}
+const PROMO_END = new Date(2026, 10, 10, 23, 59, 59);
+const rub = n => n.toLocaleString("ru-RU") + " ₽";
+const $ = id => document.getElementById(id);
+const gname = g => t("Состояние") + " " + g;
+const pct = p => Math.round((1 - p.price / p.old) * 100);
+const store = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+
+let cat = "all", cart = store.get("vk_cart", []), photos = store.get("vk_photos", {});
+cart = cart.filter(id => P.some(p => p.id === id));
+const pic = p => photos[p.id] ? `<img src="${photos[p.id]}" alt="${p.name}">` : photo(p.cat, p.fin);
+
+$("heroArt").insertAdjacentHTML("beforeend",
+  `<div style="height:250px;display:flex">${photo("fridge","silver")}</div><div style="height:150px;display:flex">${photo("washer","white")}</div><div style="height:82px;display:flex">${photo("micro","black")}</div>`);
+$("heroArt").querySelectorAll("svg").forEach(s => s.style.height = "100%");
+
+const renderCats = () => $("cats").innerHTML = CATS.map(([k,v]) => `<button type="button" class="chip${k==="sale"?" sale-chip":""}" data-cat="${k}" aria-pressed="${k===cat}">${t(v)}</button>`).join("");
+renderCats();
+$("cats").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  cat = b.dataset.cat;
+  $("cats").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+  render();
+});
+["q","maxPrice","gA","gB","gC","sort"].forEach(id => $(id).addEventListener("input", render));
+
+function card(p){
+  const inCart = cart.includes(p.id), sale = !!p.old;
+  return `<article class="card${sale?" on-sale":""}">
+    <button class="pic" type="button" data-more="${p.id}" aria-label="${t("Подробнее")}: ${pname(p)}">
+      <span class="grade g-${p.grade}">${gname(p.grade)}</span>${sale?`<span class="ribbon">${t("АКЦИЯ")} −${pct(p)}%</span>`:""}
+      ${pic(p)}<span class="price-tag">${sale?`<s>${rub(p.old)}</s>`:""}${rub(p.price)}</span>
+    </button>
+    <span class="upload" role="button" tabindex="0" data-upload="${p.id}">${t(photos[p.id]?"Заменить фото":"Загрузить фото")}</span>
+    <div class="body">
+      <h3>${pname(p)}</h3>
+      <p class="specs">${pspec(p)}<br>${p.year} ${t("г.")} · ${t("гарантия")} ${p.warr} ${t("мес")}</p>
+      <p class="was">${t("Новая ≈")} <s>${rub(p.newp)}</s> · <span class="save">−${Math.round((1-p.price/p.newp)*100)}%</span></p>
+      <div class="foot">
+        <button class="btn small" type="button" data-add="${p.id}" ${inCart?"disabled style='opacity:.6'":""}>${t(inCart?"В корзине":"В корзину")}</button>
+        <button class="btn small ghost" type="button" data-more="${p.id}">${t("Подробнее")}</button>
+      </div>
+    </div></article>`;
+}
+function render(){
+  const q = $("q").value.trim().toLowerCase(), max = +$("maxPrice").value;
+  const grades = ["gA","gB","gC"].filter(id => $(id).checked).map(id => $(id).value);
+  $("maxPriceOut").textContent = rub(max);
+  let list = P.filter(p => (cat==="all"||p.cat===cat||(cat==="sale"&&p.old)) && p.price<=max && grades.includes(p.grade)
+    && (!q || [p.name,p.spec,pname(p),pspec(p)].join(" ").toLowerCase().includes(q)));
+  const s = $("sort").value;
+  list.sort((a,b) => s==="cheap"?a.price-b.price : s==="exp"?b.price-a.price : s==="save"?(a.price/a.newp)-(b.price/b.newp) : a.day-b.day);
+  $("grid").innerHTML = list.length ? list.map(card).join("")
+    : `<div class="empty">${t("Под эти фильтры ничего нет. Уберите часть условий или оставьте заявку — сообщим, когда привезём нужную модель.")}</div>`;
+  $("foundLine").textContent = `${t("Найдено")}: ${list.length} / ${P.length}`;
+  $("promoRow").innerHTML = P.filter(p => p.old).map(card).join("");
+}
+document.addEventListener("click", e => {
+  const add = e.target.closest("[data-add]"), more = e.target.closest("[data-more]"), up = e.target.closest("[data-upload]");
+  if (up){ pickPhoto(+up.dataset.upload); }
+  else if (add){ addToCart(+add.dataset.add); }
+  else if (more){ openDetails(+more.dataset.more); }
+});
+document.addEventListener("keydown", e => { const up = e.target.closest && e.target.closest("[data-upload]"); if (up && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); pickPhoto(+up.dataset.upload); } });
+
+// Режим продавца: своё фото для товара, уменьшается до 800 px и хранится в этом браузере
+let uploadFor = null;
+$("sellerMode").addEventListener("change", e => document.body.classList.toggle("seller", e.target.checked));
+function pickPhoto(id){ uploadFor = id; $("fileIn").value = ""; $("fileIn").click(); }
+$("fileIn").addEventListener("change", () => {
+  const file = $("fileIn").files[0]; if (!file || uploadFor == null) return;
+  const img = new Image(), url = URL.createObjectURL(file);
+  img.onload = () => {
+    const k = Math.min(1, 800 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+    c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+    photos[uploadFor] = c.toDataURL("image/jpeg", .82);
+    toast(t(store.set("vk_photos", photos) ? "Фото загружено" : "Фото показано, но не сохранится: в браузере мало места"));
+    render(); renderCart();
+  };
+  img.onerror = () => toast(t("Не удалось открыть файл. Выберите фото в формате JPG или PNG."));
+  img.src = url;
+});
+
+function addToCart(id){
+  if (!cart.includes(id)) cart.push(id);
+  store.set("vk_cart", cart); render(); renderCart(); toast(t("Добавлено в корзину"));
+}
+function openDetails(id){
+  const p = P.find(x => x.id === id), inCart = cart.includes(id), sale = !!p.old;
+  $("dlg").innerHTML = `<div class="dlg${sale?" on-sale":""}">
+    <div class="pic"><span class="grade g-${p.grade}">${gname(p.grade)}</span>${sale?`<span class="ribbon">${t("АКЦИЯ")} −${pct(p)}%</span>`:""}${pic(p)}<span class="price-tag">${sale?`<s>${rub(p.old)}</s>`:""}${rub(p.price)}</span></div>
+    <div class="txt">
+      <div style="display:flex;justify-content:space-between;gap:10px"><h3 style="font-size:1.2rem">${pname(p)}</h3><button class="x" type="button" data-close aria-label="${t("Закрыть")}">×</button></div>
+      <dl class="kv"><dt>${t("Год выпуска")}</dt><dd>${p.year}</dd><dt>${t("Характеристики")}</dt><dd>${pspec(p)}</dd><dt>${t("Гарантия")}</dt><dd>${p.warr} ${t("мес")}</dd><dt>${t("Новая стоит")}</dt><dd>≈ ${rub(p.newp)}</dd>${sale?`<dt>${t("Цена до акции")}</dt><dd>${rub(p.old)}</dd>`:""}</dl>
+      <p class="eyebrow">${t("Что проверили")}</p>
+      <ul class="checks">${CHECK[p.cat].map(c=>`<li>${t(c)}</li>`).join("")}</ul>
+      <button class="btn" type="button" data-add="${p.id}" data-close ${inCart?"disabled style='opacity:.6'":""}>${inCart?t("Уже в корзине"):t("В корзину за")+" "+rub(p.price)}</button>
+    </div></div>`;
+  $("dlg").showModal();
+}
+$("dlg").addEventListener("click", e => { if (e.target === $("dlg") || e.target.closest("[data-close]")) $("dlg").close(); });
+
+function renderCart(){
+  $("cartCount").textContent = cart.length;
+  const items = cart.map(id => P.find(p => p.id === id));
+  const sum = items.reduce((s,p) => s+p.price, 0);
+  $("cartItems").innerHTML = items.length ? items.map(p => `<div class="line-item"><div class="mini">${pic(p)}</div>
+      <div class="t"><b>${pname(p)}</b><br><span class="mono" style="color:var(--muted)">${rub(p.price)} · ${gname(p.grade)}${p.old?" · "+t("акция"):""}</span></div>
+      <button class="x" type="button" data-remove="${p.id}" aria-label="${t("Убрать")} ${pname(p)}" style="font-size:1.2rem">×</button></div>`).join("")
+    : `<p style="color:var(--muted)">${t("Корзина пуста. Добавьте технику из каталога.")}</p>`;
+  const deliv = !items.length || sum >= 15000 || items.some(p => p.old) ? 0 : 700;
+  $("cartSum").textContent = rub(sum) + (deliv ? ` + ${deliv} ₽ ${t("доставка")}` : " · " + t("доставка бесплатно"));
+  $("cartTotal").hidden = $("orderForm").hidden = !items.length;
+}
+$("cartItems").addEventListener("click", e => {
+  const r = e.target.closest("[data-remove]"); if (!r) return;
+  cart = cart.filter(id => id !== +r.dataset.remove); store.set("vk_cart", cart); renderCart(); render();
+});
+const openCart = v => { $("drawer").hidden = $("scrim").hidden = !v; if (v) $("orderResult").hidden = true; };
+$("openCart").onclick = () => openCart(true);
+$("closeCart").onclick = $("scrim").onclick = () => openCart(false);
+document.addEventListener("keydown", e => { if (e.key === "Escape") openCart(false); });
+document.querySelectorAll('input[name="oWay"]').forEach(r => r.addEventListener("change", () => $("oAddr").hidden = $("oWayP").checked));
+
+function resultBox(el, title, text){
+  el.innerHTML = `<div class="result"><b>${title}</b><pre>${text.replace(/</g,"&lt;")}</pre>
+    <button class="btn small" type="button">${t("Скопировать текст заявки")}</button>
+    <small style="color:var(--muted)">${t("Отправьте этот текст по телефону +7 (900) 000-00-00 в WhatsApp или Telegram (номер — пример).")}</small></div>`;
+  el.hidden = false;
+  el.querySelector("button").onclick = () => {
+    const pre = el.querySelector("pre");
+    navigator.clipboard.writeText(text).then(() => toast(t("Скопировано")), () => {
+      const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast(t("Выделено — нажмите Ctrl+C"));
+    });
+  };
+}
+$("orderForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const items = cart.map(id => P.find(p => p.id === id));
+  const sum = items.reduce((s,p)=>s+p.price,0), way = document.querySelector('input[name="oWay"]:checked').value;
+  const text = `${t("Заказ")} «Второй Круг»\n${items.map(p=>`• ${pname(p)} (${p.year}, ${gname(p.grade)}${p.old?", "+t("акция"):""}) — ${rub(p.price)}`).join("\n")}\n${t("Итого")}: ${rub(sum)}\n${t(way)}${way==="Доставка"&&$("oAddr").value?": "+$("oAddr").value:""}\n${t("Имя")}: ${$("oName").value}\n${t("Телефон")}: ${$("oPhone").value}${$("oNote").value?"\n"+t("Комментарий")+": "+$("oNote").value:""}`;
+  resultBox($("orderResult"), t("Заявка готова"), text);
+});
+
+const BASE = {fridge:16000,washer:12000,stove:7000,dish:10000,oven:8000,micro:2500};
+const CNAME = {fridge:"Холодильник",washer:"Стиральная машина",stove:"Плита",dish:"Посудомоечная машина",oven:"Духовой шкаф",micro:"Микроволновка"};
+function estimate(){
+  const c = $("bCat").value, age = Math.max(0, Math.min(25, +$("bAge").value || 0)), k = +$("bCond").value;
+  const v = BASE[c] * Math.max(0.12, 1 - age*0.09) * k;
+  const lo = Math.max(300, Math.round(v*0.8/100)*100), hi = Math.max(500, Math.round(v*1.1/100)*100);
+  $("bOut").textContent = `${lo.toLocaleString("ru-RU")}–${rub(hi)}`;
+  $("bNote").textContent = t(age > 12 ? "Технику старше 12 лет обычно берём на запчасти." : k < 0.5 ? "Неисправную технику оцениваем по стоимости запчастей." : "Вывоз и демонтаж бесплатно.");
+  return [lo, hi, c, age];
+}
+["bCat","bAge","bCond"].forEach(id => $(id).addEventListener("input", estimate));
+$("buyForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const [lo, hi, c, age] = estimate();
+  const cond = $("bCond").selectedOptions[0].textContent;
+  resultBox($("buyResult"), t("Заявка на выкуп"), `${t("Выкуп")}: ${t(CNAME[c])}${$("bBrand").value?" "+$("bBrand").value:""}\n${t("Возраст")}: ${age} ${t("лет")}\n${t("Состояние")}: ${cond}\n${t("Предварительная оценка")}: ${lo.toLocaleString("ru-RU")}–${rub(hi)}`);
+});
+
+function tick(){
+  const ms = Math.max(0, PROMO_END - new Date()), m = Math.floor(ms/60000);
+  $("tD").textContent = String(Math.floor(m/1440)).padStart(2,"0");
+  $("tH").textContent = String(Math.floor(m%1440/60)).padStart(2,"0");
+  $("tM").textContent = String(m%60).padStart(2,"0");
+}
+let tt; function toast(m){ const t=$("toast"); t.textContent=m; t.hidden=false; clearTimeout(tt); tt=setTimeout(()=>t.hidden=true,2200); }
+function setLang(l){
+  lang = l === "uz" ? "uz" : "ru"; store.set("vk_lang", lang); document.documentElement.lang = lang;
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  if ($("dlg").open) $("dlg").close();
+  translateStatic(); renderCats(); render(); renderCart(); estimate();
+}
+document.querySelector(".lang").addEventListener("click", e => { const b = e.target.closest("[data-lang]"); if (b) setLang(b.dataset.lang); });
+setLang(store.get("vk_lang", "ru")); tick(); setInterval(tick, 30000);
+</script>
+
+</body>
+</html>
