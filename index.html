@@ -139,6 +139,7 @@ section{padding-block:44px}
 .card .foot .btn{flex:1}
 .upload{display:none;position:absolute;left:12px;bottom:12px;z-index:2;background:var(--ink);color:var(--bg);border-radius:999px;padding:6px 12px;font:600 .75rem var(--f-body);cursor:pointer}
 .seller .upload{display:inline-block}
+.price-line{display:none}
 .empty{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px}
 
 /* Process */
@@ -272,6 +273,20 @@ dialog::backdrop{background:rgb(0 0 0 / .5)}
   .price-tag{right:8px;bottom:8px;font-size:.88rem;padding:5px 8px 5px 14px;flex-direction:column;align-items:flex-end;gap:0;line-height:1.15}
   .price-tag s{font-size:.6rem}
   .upload{left:8px;top:34px;bottom:auto;font-size:.65rem;padding:4px 8px}
+  /* Каталог: товары списком друг под другом — фото слева целиком, цена и кнопка справа */
+  #grid{grid-template-columns:1fr;gap:10px}
+  #grid .card{flex-direction:row;align-items:stretch}
+  #grid .card .pic{width:40%;flex:none;aspect-ratio:auto;min-height:168px;padding:30px 8px 10px}
+  #grid .card .pic svg{height:auto;width:auto;max-width:86%;max-height:124px}
+  #grid .card .price-tag{display:none}
+  #grid .card .body{padding:12px;gap:4px;min-width:0}
+  #grid .card h3{font-size:.92rem}
+  #grid .card .specs{font-size:.7rem}
+  #grid .price-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin-top:4px}
+  #grid .price-line b{font:700 1.15rem var(--f-display);font-variant-numeric:tabular-nums}
+  #grid .on-sale .price-line b{color:var(--sale)}
+  #grid .price-line s{font-size:.75rem;color:var(--muted)}
+  #grid .card .upload{top:auto;bottom:8px}
   .steps li{padding-right:0}
   .buy{padding:20px 16px;border-radius:16px;gap:18px}
   .estimate b{font-size:1.3rem}
@@ -710,6 +725,7 @@ function card(p){
     <div class="body">
       <h3>${pname(p)}</h3>
       <p class="specs">${pspec(p)}<br>${p.year} ${t("г.")} · ${t("гарантия")} ${p.warr} ${t("мес")}</p>
+      <p class="price-line"><b>${rub(p.price)}</b>${sale?`<s>${rub(p.old)}</s>`:""}</p>
       <p class="was">${t("Новая ≈")} <s>${rub(p.newp)}</s> · <span class="save">−${Math.round((1-p.price/p.newp)*100)}%</span></p>
       <div class="foot">
         <button class="btn small" type="button" data-add="${p.id}" ${inCart?"disabled style='opacity:.6'":""}>${t(inCart?"В корзине":"В корзину")}</button>
@@ -740,6 +756,7 @@ document.addEventListener("keydown", e => { const up = e.target.closest && e.tar
 
 // Режим продавца: своё фото для товара, уменьшается до 800 px и хранится в этом браузере
 let uploadFor = null;
+$("sellerMode").checked = false; // браузер на телефоне восстанавливает галочку после перезагрузки
 $("sellerMode").addEventListener("change", e => document.body.classList.toggle("seller", e.target.checked));
 function pickPhoto(id){ uploadFor = id; $("fileIn").value = ""; $("fileIn").click(); }
 $("fileIn").addEventListener("change", () => {
